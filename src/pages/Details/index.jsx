@@ -1,4 +1,7 @@
+import { useState, useEffect } from 'react'
 import {Container, Links, Content} from './styles'
+import { useParams } from 'react-router-dom'
+import { api } from '../../services/api'
 import {Header} from '../../components/Header'
 import {Button} from '../../components/Button'
 import {Section} from '../../components/Section'
@@ -7,36 +10,66 @@ import {ButtonText} from '../../components/ButtonText'
 
 
 export function Details(){
-  
+  const [data, setData] = useState(null);
+  const params = useParams();
+
+  useEffect(() => {
+    async function fetchNote(){
+      const response = await api.get(`/notes/${params.id}`);
+      setData(response.data);
+    }
+    fetchNote();
+  },[]);
+
   return(
     <Container>
       <Header />
-
+      {
+        data && 
       <main>
         <Content>
           <ButtonText title="Excluir nota" />
 
-          <h1>Introdução ao React</h1>
+          <h1>{data.title}</h1>
           <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio praesentium quidem rem quasi consequuntur ipsa explicabo, natus ad esse rerum aut sed voluptate aliquam, provident, labore eligendi sapiente ipsam voluptatibus?
+            {data.description}
           </p>
+          {
+           data.links &&
       <Section title="Links úteis">
         <Links>
-          <li><a href='https://github.com/Josuezuu' target="_blank">https://github.com/Josuezuu</a></li>
-          <li><a href='https://www.rocketseat.com.br' target="_blank">https://www.rocketseat.com.br</a></li>
-
+        {
+        data.links.map(link => (
+          <li key={String(link.id)}>
+            <a href={link.url} target='_blank'>
+            {link.url}
+            </a>
+            </li>
+          ))
+          }
         </Links>
+        
       </Section>
+      }
+      {
+        data.tags &&
 
       <Section title="Marcadores">
-        <Tag title="Express"/>
-        <Tag title="Node"/>
+        {
+          data.tags.map(tag => (
+        <Tag 
+          key={String(tag.id)}
+          title={tag.name}          
+          />
+        ))
+        }
       </Section>
-
+      }
 
       <Button title="Voltar" />
       </Content>
       </main>
+      }
     </Container>
     ) 
 }
