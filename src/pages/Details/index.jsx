@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import {Container, Links, Content} from './styles'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../../services/api'
 import {Header} from '../../components/Header'
 import {Button} from '../../components/Button'
@@ -12,6 +12,20 @@ import {ButtonText} from '../../components/ButtonText'
 export function Details(){
   const [data, setData] = useState(null);
   const params = useParams();
+  const navigate = useNavigate();
+
+
+  function handleBack(){
+    navigate(-1)
+  }
+  async function handleRemove(){
+    const confirm = window.confirm("deseja realmente remover a nota?");
+    if (confirm){
+      await api.delete(`/notes/${params.id}`);
+      navigate(-1)
+
+    }
+  }
 
   useEffect(() => {
     async function fetchNote(){
@@ -28,7 +42,10 @@ export function Details(){
         data && 
       <main>
         <Content>
-          <ButtonText title="Excluir nota" />
+          <ButtonText 
+            title="Excluir nota"
+            onClick={handleRemove}  
+          />
 
           <h1>{data.title}</h1>
           <p>
@@ -66,7 +83,10 @@ export function Details(){
       </Section>
       }
 
-      <Button title="Voltar" />
+      <Button
+        title="Voltar" 
+        onClick={handleBack}
+      />
       </Content>
       </main>
       }

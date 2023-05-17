@@ -63,7 +63,7 @@ export function New(){
       links
     });
     alert("Nota adicionada com sucesso!");
-    navigate("/");
+    navigate(-1);
   }
   return(
     <Container>
